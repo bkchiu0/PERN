@@ -1,0 +1,56 @@
+version: "3.3"
+services:
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - postgres
+    ports:
+      - "80:80"
+    network_mode: bridge
+    container_name: pgadmin
+    external_links:
+      - postgres:postgres
+
+    # Please set pgadmin email and password
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "postgres"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+
+  postgres:
+    image: postgres:12.0-alpine
+    ports:
+      - "5432:5432"
+    network_mode: bridge
+    container_name: postgres
+
+    # Please set user, password, and DB name and update the init.sql db file
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "postgres"
+
+    # Import init.sql for schemas
+    volumes:
+      - ./Database/initdb:/docker-entrypoint-initdb.d
+      - postgres-data:/var/lib/postgresql/data
+
+  nodeapi:
+    container_name: nodeapi
+    build:
+      context: ./Backend
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+
+  reactapp:
+    container_name: reactapp
+    build:
+      context: ./Frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - nodeapi
+
+volumes:
+  postgres-data:
