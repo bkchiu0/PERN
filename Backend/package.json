@@ -4,7 +4,7 @@
   "description": "Node JS Express",
   "main": "index.ts",
   "scripts": {
-    "start": "npm run-script tsc && node dist/index.js",
+    "start": "npm run tsc && node dist/index.js",
     "tsc": "tsc"
   },
   "author": "Your Name Here",
